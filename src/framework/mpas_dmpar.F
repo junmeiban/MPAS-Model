@@ -65,6 +65,8 @@ include 'mpif.h'
 
    public :: mpas_dmpar_init
    public :: mpas_dmpar_finalize
+   public :: mpas_mpi_init
+   public :: mpas_mpi_finalize
    public :: mpas_dmpar_abort
    public :: mpas_dmpar_bcast_int
    public :: mpas_dmpar_bcast_ints
@@ -227,6 +229,48 @@ include 'mpif.h'
 !>  It also setups of the domain information structure.
 !
 !-----------------------------------------------------------------------
+!   subroutine mpi_init(do_init,comm)
+!   implicit none
+!
+!   integer, intent(inout) :: comm
+!   logical, intent(inout) :: do_init
+!   integer :: mpi_ierr
+!
+!#ifdef MPAS_OPENMP
+!      integer :: desiredThreadLevel, threadLevel
+!#endif
+!
+!        do_init = .true.
+!#ifdef MPAS_OPENMP
+!         desiredThreadLevel = MPI_THREAD_MULTIPLE
+!         call MPI_Init_thread(desiredThreadLevel, threadLevel, mpi_ierr)
+!         if ( threadLevel /= desiredThreadLevel ) then
+!            write(stderrUnit, *) 'Warning: MPI implementation gave thread level of ', threadLevel, ' when ', desiredThreadLevel, ' was requested.'
+!         end if
+!#else
+!         call MPI_Init(mpi_ierr)
+!#endif
+!         call MPI_Comm_dup(MPI_COMM_WORLD, comm, mpi_ierr) 
+!
+!   end subroutine mpi_init
+
+subroutine mpas_mpi_init()
+implicit none
+integer :: mpi_ierr
+
+call MPI_Init(mpi_ierr)
+
+end subroutine mpas_mpi_init
+
+subroutine mpas_mpi_finalize()
+implicit none
+integer :: mpi_ierr
+
+call MPI_Finalize(mpi_ierr)
+
+end subroutine mpas_mpi_finalize
+
+
    subroutine mpas_dmpar_init(dminfo, mpi_comm)!{{{
 
       implicit none
@@ -243,8 +287,10 @@ include 'mpif.h'
 
       if ( present(mpi_comm) ) then
          dminfo % initialized_mpi = .false.
-         call MPI_Comm_dup(mpi_comm, dminfo % comm, mpi_ierr)
+         !call MPI_Comm_dup(mpi_comm, dminfo % comm, mpi_ierr)
       else
+
+!         call  mpi_init(dminfo % initialized_mpi,dminfo % comm)
          dminfo % initialized_mpi = .true.
 #ifdef MPAS_OPENMP
          desiredThreadLevel = MPI_THREAD_MULTIPLE
@@ -255,7 +301,7 @@ include 'mpif.h'
 #else
          call MPI_Init(mpi_ierr)
 #endif
-         call MPI_Comm_dup(MPI_COMM_WORLD, dminfo % comm, mpi_ierr)
+         !call MPI_Comm_dup(MPI_COMM_WORLD, dminfo % comm, mpi_ierr)
       end if
 
       ! Find out our rank and the total number of processors
@@ -303,10 +349,11 @@ include 'mpif.h'
 #endif
 
 #ifdef _MPI
-      call MPI_Comm_free(dminfo % comm, mpi_ierr)
-      if (dminfo % initialized_mpi) then
-         call MPI_Finalize(mpi_ierr)
-      end if
+      !call MPI_Comm_free(dminfo % comm, mpi_ierr)
+      !if (dminfo % initialized_mpi) then
+      !   call MPI_Finalize(mpi_ierr)
+      !end if
+      write(0,*)'GD empty mpas_dmpar_finalize for oops'
 #endif
 
    end subroutine mpas_dmpar_finalize!}}}

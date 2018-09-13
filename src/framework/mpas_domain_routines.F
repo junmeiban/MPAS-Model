@@ -121,22 +121,23 @@ module mpas_domain_routines
       type (block_type), pointer :: block_ptr
       type (mpas_exchange_group), pointer :: exchGroupPtr
 
+      write(*,*)'inside mpas_deallocate'
       block_ptr => dom % blocklist
       do while (associated(block_ptr))
          call mpas_deallocate_block(block_ptr)
          block_ptr => block_ptr % next
       end do
 
-      exchGroupPtr => dom % exchangeGroups
-      do while (associated(exchGroupPtr))
-         call mpas_dmpar_exch_group_destroy(dom, exchGroupPtr % groupName)
-         exchGroupPtr => dom % exchangeGroups
-      end do
+      !exchGroupPtr => dom % exchangeGroups
+      !do while (associated(exchGroupPtr))
+      !   call mpas_dmpar_exch_group_destroy(dom, exchGroupPtr % groupName)
+      !   exchGroupPtr => dom % exchangeGroups
+      !end do
 
-      call mpas_pool_destroy_pool(dom % configs)
-      call mpas_pool_destroy_pool(dom % packages)
-      deallocate(dom % clock)
-      deallocate(dom % ioContext)
+      !call mpas_pool_destroy_pool(dom % configs)
+      !call mpas_pool_destroy_pool(dom % packages)
+      !deallocate(dom % clock)
+      !deallocate(dom % ioContext)
 
    end subroutine mpas_deallocate_domain!}}}
 

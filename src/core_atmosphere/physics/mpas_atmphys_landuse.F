@@ -228,6 +228,9 @@
           isurban = 1
        case default
     end select sfc_input_select
+
+ ! GD ADD
+ close(land_unit)  
  endif
 
  DM_BCAST_CHAR(lutype)

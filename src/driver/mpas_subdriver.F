@@ -35,14 +35,14 @@ module mpas_subdriver
    use test_core_interface
 #endif
 
-   type (core_type), pointer :: corelist => null()
+!   type (core_type), pointer :: corelist => null()
    type (dm_info), pointer :: dminfo
-   type (domain_type), pointer :: domain_ptr
+!   type (domain_type), pointer :: domain_ptr
 
    contains
 
 
-   subroutine mpas_init()
+   subroutine mpas_init(corelist, domain_ptr, mpi_comm)
 
       use mpas_stream_manager, only : MPAS_stream_mgr_init, MPAS_build_stream_filename
       use iso_c_binding, only : c_char, c_loc, c_ptr, c_int
@@ -51,6 +51,10 @@ module mpas_subdriver
       use mpas_bootstrapping, only : mpas_bootstrap_framework_phase1, mpas_bootstrap_framework_phase2
  
       implicit none
+
+      type (core_type), intent(out), pointer :: corelist
+      type (domain_type), intent(out), pointer :: domain_ptr
+      integer, intent(in), optional :: mpi_comm
 
       integer :: iArg, nArgs
       logical :: readNamelistArg, readStreamsArg
@@ -153,7 +157,7 @@ module mpas_subdriver
       !
       ! Initialize infrastructure
       !
-      call mpas_framework_init_phase1(domain_ptr % dminfo)
+      call mpas_framework_init_phase1(domain_ptr % dminfo, mpi_comm)
 
 #ifdef CORE_ATMOSPHERE
       call atm_setup_core(corelist)
@@ -317,11 +321,12 @@ module mpas_subdriver
    end subroutine mpas_init
 
 
-   subroutine mpas_run()
+   subroutine mpas_run(domain_ptr)
 
       implicit none
 
       integer :: iErr
+      type (domain_type), intent(inout), pointer :: domain_ptr
 
       iErr = domain_ptr % core % core_run(domain_ptr)
       if ( iErr /= 0 ) then
@@ -331,16 +336,19 @@ module mpas_subdriver
    end subroutine mpas_run
 
 
-   subroutine mpas_finalize()
+   subroutine mpas_finalize(corelist,domain_ptr)
 
       use mpas_stream_manager, only : MPAS_stream_mgr_finalize
    
       implicit none
 
+      type (core_type), intent(inout), pointer :: corelist
+      type (domain_type), intent(inout), pointer :: domain_ptr
+
       integer :: iErr
 
 
-      !
+      
       ! Finalize core
       !
       iErr = domain_ptr % core % core_finalize(domain_ptr)
@@ -353,6 +361,7 @@ module mpas_subdriver
       call mpas_timer_write()
       call mpas_timer_finalize(domain_ptr)
 
+      write(0,*)'GD finalize'
 
       !
       ! Finalize infrastructure

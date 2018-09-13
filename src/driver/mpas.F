@@ -10,12 +10,15 @@ program mpas
    use mpas_subdriver
 
    implicit none
+   
+   type (core_type), pointer :: corelist
+   type (domain_type), pointer :: domain_ptr   
 
-   call mpas_init()
+   call mpas_init(corelist,domain_ptr)
 
-   call mpas_run() 
+   call mpas_run(domain_ptr) 
 
-   call mpas_finalize()
+   call mpas_finalize(corelist,domain_ptr)
 
    stop
 

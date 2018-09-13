@@ -218,15 +218,15 @@ gfortran:
 	"FC_SERIAL = gfortran" \
 	"CC_SERIAL = gcc" \
 	"CXX_SERIAL = g++" \
-	"FFLAGS_PROMOTION = -fdefault-real-8 -fdefault-double-8" \
-	"FFLAGS_OPT = -O3 -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form" \
-	"CFLAGS_OPT = -O3 -m64" \
-	"CXXFLAGS_OPT = -O3 -m64" \
-	"LDFLAGS_OPT = -O3 -m64" \
-	"FFLAGS_DEBUG = -g -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form -fbounds-check -fbacktrace -ffpe-trap=invalid,zero,overflow" \
-	"CFLAGS_DEBUG = -g -m64" \
-	"CXXFLAGS_DEBUG = -O3 -m64" \
-	"LDFLAGS_DEBUG = -g -m64" \
+	"FFLAGS_PROMOTION = -fdefault-real-8 -fdefault-double-8 -fPIC" \
+	"FFLAGS_OPT = -O3 -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form -fPIC" \
+	"CFLAGS_OPT = -O3 -m64 -fPIC" \
+	"CXXFLAGS_OPT = -O3 -m64 -fPIC" \
+	"LDFLAGS_OPT = -O3 -m64 -fPIC" \
+	"FFLAGS_DEBUG = -g -m64 -ffree-line-length-none -fPIC -fconvert=big-endian -ffree-form -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow" \
+	"CFLAGS_DEBUG = -g -m64 -fPIC" \
+	"CXXFLAGS_DEBUG = -O3 -m64 -fPIC" \
+	"LDFLAGS_DEBUG = -g -m64 -fPIC" \
 	"FFLAGS_OMP = -fopenmp" \
 	"CFLAGS_OMP = -fopenmp" \
 	"CORE = $(CORE)" \
@@ -813,4 +813,5 @@ errmsg:
 ifdef CORE
 	exit 1
 endif
+
 

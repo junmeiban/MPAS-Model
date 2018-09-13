@@ -4082,6 +4082,7 @@ module mpas_stream_manager
 
                 select case (info % fieldType)
                     case (MPAS_POOL_REAL)
+                            write(0,*)'GD build stream MPAS_POOL_REAL: ',itr % memberName,info % nDims
                         select case (info % nDims)
                             case (0)
                                 call mpas_pool_get_field(allFields, itr % memberName, real0d, timeLevel)
@@ -4103,6 +4104,7 @@ module mpas_stream_manager
                                 call MPAS_streamAddField(stream % stream, real5d)
                         end select
                     case (MPAS_POOL_INTEGER)
+                            write(0,*)'GD build stream MPAS_POOL_INTEGER: ',itr % memberName,info % nDims
                         select case (info % nDims)
                             case (0)
                                 call mpas_pool_get_field(allFields, itr % memberName, int0d, timeLevel)
@@ -4118,6 +4120,7 @@ module mpas_stream_manager
                                 call MPAS_streamAddField(stream % stream, int3d)
                         end select
                     case (MPAS_POOL_CHARACTER)
+                        write(0,*)'GD build stream MPAS_POOL_CHARACTER: ',itr % memberName,info % nDims
                         select case (info % nDims)
                             case (0)
                                 call mpas_pool_get_field(allFields, itr % memberName, char0d, timeLevel)

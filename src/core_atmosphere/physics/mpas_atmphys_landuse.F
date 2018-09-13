@@ -228,8 +228,9 @@
        case default
     end select sfc_input_select
 
- ! GD ADD
- close(land_unit)  
+!!JJG MERGE COMMENT: This code not originally in MPAS, but might be necessary for the JEDI interface...need to check
+    ! GD ADD
+    close(land_unit)  
  endif
 
  DM_BCAST_CHAR(lutype)

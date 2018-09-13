@@ -94,7 +94,10 @@
 #ifdef SINGLE_PRECISION
     open(rrtmg_unit,file='RRTMG_LW_DATA',form='UNFORMATTED',status='OLD',iostat=istat)
 #else
+!!JJG MERGE COMMENT: This code not originally in MPAS, but might be necessary for the JEDI interface...need to check
     open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat,convert='big_endian')
+!ORIGINAL
+!    open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat)
 #endif
 
     if(istat /= 0) then

@@ -338,7 +338,9 @@ module sw_core
       integer :: ierr
 
       iErr = 0
- 
+
+      clock => domain % clock
+
       call mpas_destroy_clock(clock, ierr)
 
    end function sw_core_finalize

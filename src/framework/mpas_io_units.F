@@ -21,7 +21,7 @@ module mpas_io_units
 
    use mpas_kind_types
 
-   integer, parameter, private :: maxUnits = 99
+   integer, parameter, private :: maxUnits = 1000
    logical, dimension(0:maxUnits), private, save :: unitsInUse
 
    contains
@@ -45,6 +45,8 @@ module mpas_io_units
 
         logical :: opened
 
+        newUnit = -1
+
         do i = 1, maxUnits
             if (.not. unitsInUse(i)) then
                 inquire(i, opened=opened)
@@ -57,7 +59,6 @@ module mpas_io_units
                 endif
             end if
         end do
-
     end subroutine mpas_new_unit!}}}
 
 !***********************************************************************
@@ -74,7 +75,8 @@ module mpas_io_units
     subroutine mpas_release_unit(releasedUnit)!{{{
         integer, intent(in) :: releasedUnit
 
-        unitsInUse(releasedUnit) = .false.
+        if ( 0.le.releasedUnit .and. releasedUnit.le.maxUnits) &
+           unitsInUse(releasedUnit) = .false.
 
     end subroutine mpas_release_unit!}}}
 

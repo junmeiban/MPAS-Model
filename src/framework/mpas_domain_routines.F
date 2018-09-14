@@ -128,7 +128,6 @@ module mpas_domain_routines
          block_ptr => block_ptr % next
       end do
 
-!!JJG MERGE COMMENT: This code is needed for MPAS, but might break the JEDI interface...need to check
       exchGroupPtr => dom % exchangeGroups
       do while (associated(exchGroupPtr))
          call mpas_dmpar_exch_group_destroy(dom, exchGroupPtr % groupName)
@@ -139,7 +138,6 @@ module mpas_domain_routines
       call mpas_pool_destroy_pool(dom % packages)
       deallocate(dom % clock)
       deallocate(dom % ioContext)
-!END COMMENT
 
    end subroutine mpas_deallocate_domain!}}}
 

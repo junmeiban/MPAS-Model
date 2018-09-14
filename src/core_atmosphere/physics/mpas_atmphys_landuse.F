@@ -110,13 +110,14 @@
  character(len=StrKIND) :: lutype
  character(len=StrKIND):: mess
 
- integer,parameter:: land_unit = 15
+ integer :: land_unit
+ logical :: unit_used
  integer,parameter:: open_ok   = 0
  integer,parameter:: max_cats  = 100
  integer,parameter:: max_seas  = 12
 
  integer:: ierr,istat
- integer:: ic,is,isn,lucats,lumatch,luseas
+ integer:: ic,is,isn,lucats,lumatch,luseas,i
  integer:: iCell
  integer:: julday_init
 
@@ -163,6 +164,19 @@
 
 !reads in the landuse properties from landuse.tbl:
  if(dminfo % my_proc_id == IO_NODE) then
+    !get a unit to open init file:
+    istat = -999
+    do i = 10,99
+       inquire(i,opened = unit_used,iostat=istat)
+       if(.not. unit_used ) then
+          land_unit = i
+          exit
+       endif
+    enddo
+    if(istat /= 0) &
+       call physics_error_fatal('mpas_atmphys_landuse: landuse_init_forMPAS: Can not '// &
+                                'find unused fortran unit to read in lookup table.' )
+
     open(land_unit,file='LANDUSE.TBL',action='READ',status='OLD',iostat=istat)
     if(istat /= open_ok) &
        call physics_error_fatal('subroutine landuse_init_forMPAS: ' // &
@@ -228,8 +242,6 @@
        case default
     end select sfc_input_select
 
-!!JJG MERGE COMMENT: This code not originally in MPAS, but might be necessary for the JEDI interface...need to check
-    ! GD ADD
     close(land_unit)  
  endif
 

@@ -195,6 +195,8 @@ module test_core
 
       iErr = 0
 
+      clock => domain % clock
+
       call mpas_destroy_clock(clock, iErr)
 
    end function test_core_finalize!}}}

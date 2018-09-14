@@ -275,21 +275,10 @@
           end if
 
           if ( .not. timer_root % current_timer % nlen == nlen ) then
-!!JJG MERGE COMMENT
-!<<<<<<< HEAD
-!             !if ( .not. timer_root % current_timer % timer_name(1:timer_root % current_timer % nlen) == trimmed_name(1:nlen) ) then
-!             !   write(stderrUnit, * ) 'GD removed abort ERROR: Trying to stop timer ', trim(trimmed_name), ' when ', &
-!             !                         trim(timer_root % current_timer % timer_name), ' is the most recently started timer.'
-!             write(0,*)'GD PB .not. timer_root % current_timer % nlen == nlen'
-!              ! GD  call mpas_dmpar_global_abort('ERROR: Incorrect timer usage')
-!             !end if
-!=======
              if ( .not. timer_root % current_timer % timer_name(1:timer_root % current_timer % nlen) == trimmed_name(1:nlen) ) then
                 call mpas_log_write('Trying to stop timer ' // trim(trimmed_name) // ' when ' // &
                            trim(timer_root % current_timer % timer_name) // ' is the most recently started timer.', MPAS_LOG_CRIT)
              end if
-!!JJG MERGE COMMENT
-!>>>>>>> master
           end if
 
           ! Set stop time

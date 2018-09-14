@@ -494,6 +494,8 @@ module atm_core
       real (kind=R8KIND) :: output_start_time, output_stop_time
       
       ierr = 0
+
+      clock => domain % clock
       
       ! Eventually, dt should be domain specific
       call mpas_pool_get_config(domain % blocklist % configs, 'config_dt', dt)
@@ -851,6 +853,8 @@ module atm_core
       real (kind=RKIND) :: xtime_s
       integer :: ierr
 
+      clock => domain % clock
+
       startTime = mpas_get_clock_time(clock, MPAS_START_TIME, ierr)
       currTime = mpas_get_clock_time(clock, MPAS_NOW, ierr)
          
@@ -894,6 +898,8 @@ module atm_core
       ierr = 0
 
       call mpas_atm_diag_cleanup()
+
+      clock => domain % clock
 
       call mpas_destroy_clock(clock, ierr)
       call mpas_decomp_destroy_decomp_list(domain % decompositions)

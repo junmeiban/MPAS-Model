@@ -121,7 +121,6 @@ module mpas_domain_routines
       type (block_type), pointer :: block_ptr
       type (mpas_exchange_group), pointer :: exchGroupPtr
 
-      write(*,*)'inside mpas_deallocate'
       block_ptr => dom % blocklist
       do while (associated(block_ptr))
          call mpas_deallocate_block(block_ptr)

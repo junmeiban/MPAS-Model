@@ -374,7 +374,7 @@ module mpas_subdriver
       integer :: iErr
 
 
-      
+      !
       ! Finalize core
       !
       iErr = domain_ptr % core % core_finalize(domain_ptr)

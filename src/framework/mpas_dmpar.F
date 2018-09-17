@@ -231,7 +231,6 @@ include 'mpif.h'
 !>  It also setups of the domain information structure.
 !
 !-----------------------------------------------------------------------
-
    subroutine mpas_dmpar_init(dminfo, mpi_comm)!{{{
 
       implicit none
@@ -245,6 +244,7 @@ include 'mpif.h'
 #ifdef MPAS_OPENMP
       integer :: desiredThreadLevel, threadLevel
 #endif
+
       if ( present(mpi_comm) ) then
          dminfo % initialized_mpi = .false.
 #ifdef MPAS_OPENMP
@@ -298,6 +298,7 @@ include 'mpif.h'
       dminfo % nprocs = 1
       dminfo % initialized_mpi = .false.
 #endif
+
    end subroutine mpas_dmpar_init!}}}
 
 !-----------------------------------------------------------------------
@@ -319,6 +320,7 @@ include 'mpif.h'
 #ifdef _MPI
       integer :: mpi_ierr
 #endif
+
 #ifdef _MPI
       call MPI_Comm_free(dminfo % comm, mpi_ierr)
       if (dminfo % initialized_mpi) then
@@ -349,6 +351,7 @@ include 'mpif.h'
 
       call MPI_Abort(dminfo % comm, mpi_errcode, mpi_ierr)
 #endif
+
       stop
 
    end subroutine mpas_dmpar_abort!}}}

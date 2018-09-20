@@ -179,7 +179,7 @@ module mpas_log
       mpas_log_info % nTasks = domain % dminfo % nprocs
 
       ! Store the domain number
-      !   This will be inserted into the name of the abort file
+      !   This will be used to decide whether to abort MPI
       mpas_log_info % domainID = domain % domainID
       write(domainString, '(i4.4)') mpas_log_info % domainID
 
@@ -217,7 +217,7 @@ module mpas_log
       write(proposedLogFileName, fmt='(a, a, a, a, a)') "log.", trim(mpas_log_info % coreName), ".", trim(taskString), ".out"
       write(proposedErrFileName, fmt='(a, a, a, a, a)') "log.", trim(mpas_log_info % coreName), ".", trim(taskString), ".err"
 
-      if ( mpas_log_info % domainID .ge. 1 ) then
+      if ( mpas_log_info % domainID > 0 ) then
          write(proposedLogFileName, fmt='(a, a, a)') trim(proposedLogFileName),".d", trim(domainString)
          write(proposedErrFileName, fmt='(a, a, a)') trim(proposedErrFileName),".d", trim(domainString)
       end if
@@ -283,7 +283,7 @@ module mpas_log
          mpas_log_info % outputLog % unitNum = unitNumber
          call mpas_new_unit(unitNumber)
          mpas_log_info % errorLog % unitNum = unitNumber
-         if (unitNumber .lt. 0) &
+         if ( unitNumber < 0 ) &
             call mpas_dmpar_global_abort('ERROR: All file units are taken.  Change maxUnits in mpas_io_units.F')
 
       endif
@@ -434,7 +434,7 @@ module mpas_log
          write(unitNumber, '(a)') '----------------------------------------------------------------------'
          write(unitNumber, '(a,a,a,a,a,i7.1,a,i7.1)') 'Beginning MPAS-', trim(mpas_log_info % coreName), ' ', &
             trim(logTypeString), ' Log File for task ', mpas_log_info % taskID, ' of ', mpas_log_info % nTasks
-         if ( mpas_log_info % domainID .ge. 1 ) &
+         if ( mpas_log_info % domainID > 0 ) &
             write(unitNumber, '(a,i7.1)') &
                ' for domain number ',  mpas_log_info % domainID
 
@@ -849,7 +849,7 @@ module mpas_log
       deallocate(mpas_log_info)
 
 #ifdef _MPI
-      if (mpas_log_info % domainID .eq. 0) &
+      if ( mpas_log_info % domainID == 0 ) &
          call MPI_Abort(MPI_COMM_WORLD, mpi_errcode, mpi_ierr)
 #else
       stop

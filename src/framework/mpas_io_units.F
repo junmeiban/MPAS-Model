@@ -75,7 +75,7 @@ module mpas_io_units
     subroutine mpas_release_unit(releasedUnit)!{{{
         integer, intent(in) :: releasedUnit
 
-        if ( 0.le.releasedUnit .and. releasedUnit.le.maxUnits) &
+        if ( 0 <= releasedUnit .and. releasedUnit <= maxUnits) &
            unitsInUse(releasedUnit) = .false.
 
     end subroutine mpas_release_unit!}}}

@@ -128,7 +128,7 @@ module mpas_framework
 
       call mpas_deallocate_domain(domain)
 
-      if ( domain % domainID .eq. 0 ) &
+      if ( domain % domainID == 0 ) &
          call mpas_dmpar_finalize(dminfo)
 
       call mpas_finish_block_proc_list(dminfo)

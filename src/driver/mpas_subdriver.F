@@ -353,6 +353,8 @@ module mpas_subdriver
       integer :: iErr
       type (domain_type), intent(inout), pointer :: domain_ptr
 
+      if ( associated(domain_ptr % logInfo) ) mpas_log_info => domain_ptr % logInfo
+
       iErr = domain_ptr % core % core_run(domain_ptr)
       if ( iErr /= 0 ) then
          call mpas_log_write('Core run failed for core '//trim(domain_ptr % core % coreName), messageType=MPAS_LOG_CRIT)
@@ -395,6 +397,8 @@ module mpas_subdriver
       ! Print out log stats and close log file
       !   (Do this after timer stats are printed and stream mgr finalized,
       !    but before framework is finalized because domain is destroyed there.)
+      if ( associated(domain_ptr % logInfo) ) mpas_log_info => domain_ptr % logInfo
+
       call mpas_log_finalize(iErr)
       if ( iErr /= 0 ) then
          call mpas_dmpar_global_abort('ERROR: Log finalize failed for core ' // trim(domain_ptr % core % coreName))

@@ -217,7 +217,6 @@
  integer:: lumatch,iindex,lc,num_slope
  integer:: istat
  integer:: read_unit, i
- logical:: unit_used
 
 !-----SPECIFY VEGETATION RELATED CHARACTERISTICS :
 !ALBBCK: SFC albedo (in percentage)
@@ -252,18 +251,6 @@
     call mpas_new_unit(read_unit)
     if ( read_unit < 0 ) &
        call physics_error_fatal('soil_veg_gen_parm: All file units are taken.  Change maxUnits in mpas_io_units.F')
-
-!    istat = -999
-!    do i = 10,99
-!       inquire(i,opened = unit_used,iostat=istat)
-!       if(.not. unit_used ) then
-!          read_unit = i
-!          exit
-!       endif
-!    enddo
-!    if(istat /= 0) &
-!       call physics_error_fatal('soil_veg_gen_parm: Can not '// &
-!                                'find unused fortran unit to read in lookup table.' )
 
     open(read_unit,file='VEGPARM.TBL',form='FORMATTED',status='OLD',iostat=istat)
     if(istat /= open_ok) &

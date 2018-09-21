@@ -112,7 +112,6 @@
  character(len=StrKIND):: mess
 
  integer :: land_unit
- logical :: unit_used
  integer,parameter:: open_ok   = 0
  integer,parameter:: max_cats  = 100
  integer,parameter:: max_seas  = 12
@@ -169,18 +168,6 @@
     call mpas_new_unit(land_unit)
     if ( land_unit < 0 ) &
        call physics_error_fatal('landuse_init_forMPAS: All file units are taken.  Change maxUnits in mpas_io_units.F')
-
-!    istat = -999
-!    do i = 10,99
-!       inquire(i,opened = unit_used,iostat=istat)
-!       if(.not. unit_used ) then
-!          land_unit = i
-!          exit
-!       endif
-!    enddo
-!    if(istat /= 0) &
-!       call physics_error_fatal('mpas_atmphys_landuse: landuse_init_forMPAS: Can not '// &
-!                                'find unused fortran unit to read in lookup table.' )
 
     open(land_unit,file='LANDUSE.TBL',action='READ',status='OLD',iostat=istat)
     if(istat /= open_ok) &

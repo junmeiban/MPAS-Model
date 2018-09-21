@@ -35,9 +35,7 @@ module mpas_subdriver
    use test_core_interface
 #endif
 
-!   type (core_type), pointer :: corelist => null()
    type (dm_info), pointer :: dminfo
-!   type (domain_type), pointer :: domain_ptr
 
    contains
 

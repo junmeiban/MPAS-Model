@@ -16,6 +16,7 @@
  use mpas_dmpar
  use mpas_kind_types
  use mpas_pool_routines
+ use mpas_io_units
 
  use mpas_atmphys_constants
  use mpas_atmphys_utilities
@@ -248,17 +249,21 @@
 
  if(dminfo % my_proc_id == IO_NODE) then
     !get a unit to open init file:
-    istat = -999
-    do i = 10,99
-       inquire(i,opened = unit_used,iostat=istat)
-       if(.not. unit_used ) then
-          read_unit = i
-          exit
-       endif
-    enddo
-    if(istat /= 0) &
-       call physics_error_fatal('soil_veg_gen_parm: Can not '// &
-                                'find unused fortran unit to read in lookup table.' )
+    call mpas_new_unit(read_unit)
+    if ( read_unit < 0 ) &
+       call physics_error_fatal('soil_veg_gen_parm: All file units are taken.  Change maxUnits in mpas_io_units.F')
+
+!    istat = -999
+!    do i = 10,99
+!       inquire(i,opened = unit_used,iostat=istat)
+!       if(.not. unit_used ) then
+!          read_unit = i
+!          exit
+!       endif
+!    enddo
+!    if(istat /= 0) &
+!       call physics_error_fatal('soil_veg_gen_parm: Can not '// &
+!                                'find unused fortran unit to read in lookup table.' )
 
     open(read_unit,file='VEGPARM.TBL',form='FORMATTED',status='OLD',iostat=istat)
     if(istat /= open_ok) &
@@ -506,6 +511,7 @@
     read(read_unit,*)
     read(read_unit,*)lvcoef_data
     close(read_unit)
+    call mpas_release_unit(read_unit)
  endif
 
  DM_BCAST_INTEGER(num_slope)

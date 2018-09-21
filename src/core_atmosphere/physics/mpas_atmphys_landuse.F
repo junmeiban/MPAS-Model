@@ -14,6 +14,7 @@
  use mpas_dmpar
  use mpas_kind_types
  use mpas_pool_routines
+ use mpas_io_units
 
  use mpas_atmphys_utilities
  use mpas_atmphys_vars
@@ -165,17 +166,21 @@
 !reads in the landuse properties from landuse.tbl:
  if(dminfo % my_proc_id == IO_NODE) then
     !get a unit to open init file:
-    istat = -999
-    do i = 10,99
-       inquire(i,opened = unit_used,iostat=istat)
-       if(.not. unit_used ) then
-          land_unit = i
-          exit
-       endif
-    enddo
-    if(istat /= 0) &
-       call physics_error_fatal('mpas_atmphys_landuse: landuse_init_forMPAS: Can not '// &
-                                'find unused fortran unit to read in lookup table.' )
+    call mpas_new_unit(land_unit)
+    if ( land_unit < 0 ) &
+       call physics_error_fatal('landuse_init_forMPAS: All file units are taken.  Change maxUnits in mpas_io_units.F')
+
+!    istat = -999
+!    do i = 10,99
+!       inquire(i,opened = unit_used,iostat=istat)
+!       if(.not. unit_used ) then
+!          land_unit = i
+!          exit
+!       endif
+!    enddo
+!    if(istat /= 0) &
+!       call physics_error_fatal('mpas_atmphys_landuse: landuse_init_forMPAS: Can not '// &
+!                                'find unused fortran unit to read in lookup table.' )
 
     open(land_unit,file='LANDUSE.TBL',action='READ',status='OLD',iostat=istat)
     if(istat /= open_ok) &
@@ -243,6 +248,7 @@
     end select sfc_input_select
 
     close(land_unit)  
+    call mpas_release_unit(land_unit)
  endif
 
  DM_BCAST_CHAR(lutype)

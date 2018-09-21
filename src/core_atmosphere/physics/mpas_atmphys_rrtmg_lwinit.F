@@ -95,6 +95,7 @@
     open(rrtmg_unit,file='RRTMG_LW_DATA',form='UNFORMATTED',status='OLD',iostat=istat)
 #else
     open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat,convert='big_endian')
+!    open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat)
 #endif
 
     if(istat /= 0) then

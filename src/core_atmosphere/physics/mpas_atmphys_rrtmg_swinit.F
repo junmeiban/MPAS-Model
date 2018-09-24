@@ -93,8 +93,8 @@
 #ifdef SINGLE_PRECISION
     open(rrtmg_unit,file='RRTMG_SW_DATA',form='UNFORMATTED',iostat=istat)
 #else
-    open(rrtmg_unit,file='RRTMG_SW_DATA.DBL',form='UNFORMATTED',iostat=istat,convert='big_endian')
-!    open(rrtmg_unit,file='RRTMG_SW_DATA.DBL',form='UNFORMATTED',iostat=istat)
+!    open(rrtmg_unit,file='RRTMG_SW_DATA.DBL',form='UNFORMATTED',iostat=istat,convert='big_endian')
+    open(rrtmg_unit,file='RRTMG_SW_DATA.DBL',form='UNFORMATTED',iostat=istat)
 #endif
 
     if(istat /= 0) then

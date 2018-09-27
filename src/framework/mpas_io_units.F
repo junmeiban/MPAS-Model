@@ -21,8 +21,16 @@ module mpas_io_units
 
    use mpas_kind_types
 
-   integer, parameter, private :: maxUnits = 1000
-   logical, dimension(0:maxUnits), private, save :: unitsInUse
+   implicit none
+
+   private
+
+   integer, parameter :: maxUnits = 1010
+   logical, dimension(0:maxUnits), save :: unitsInUse
+   integer, parameter :: unformatted_min = 1001
+   integer, parameter :: unformatted_max = 1010
+
+   public :: mpas_new_unit, mpas_release_unit
 
    contains
 
@@ -38,16 +46,29 @@ module mpas_io_units
 !> the unit number
 !
 !-----------------------------------------------------------------------
-    subroutine mpas_new_unit(newUnit)!{{{
+    subroutine mpas_new_unit(newUnit, unformatted)!{{{
         integer, intent(inout) :: newUnit
+        logical, optional, intent(in) :: unformatted
 
-        integer :: i
+        integer :: i, minsearch, maxsearch, limit_type
 
         logical :: opened
 
         newUnit = -1
 
-        do i = 1, maxUnits
+        limit_type = 1
+        if ( present(unformatted) ) then
+           if ( unformatted ) limit_type = 2
+        end if
+        if ( limit_type == 2 ) then
+           minsearch = unformatted_min
+           maxsearch = unformatted_max
+        else
+           minsearch = 1
+           maxsearch = maxUnits
+        end if
+
+        do i = minsearch, maxsearch
             if (.not. unitsInUse(i)) then
                 inquire(i, opened=opened)
                 if (opened) then

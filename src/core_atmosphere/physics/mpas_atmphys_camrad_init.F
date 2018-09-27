@@ -16,7 +16,8 @@
  use mpas_dmpar
  use mpas_kind_types
  use mpas_pool_routines
- 
+ use mpas_io_units
+
  use mpas_atmphys_constants,only: cp,degrad,ep_2,gravity,R_d,R_v,stbolt
  use mpas_atmphys_utilities
 
@@ -298,7 +299,6 @@
  real(r8):: tdbl
 
  integer:: i,istat,cam_abs_unit
- logical:: opened
  character(len=StrKIND):: errmess
 
  integer:: i_te,i_rh
@@ -330,16 +330,9 @@
  fwc2   = 4.5          ! See eq(33) and eq(34) in R&D
  fc1    = 2.6          ! See eq(34) R&D
 
- istat = -999
  if(dminfo % my_proc_id == IO_NODE) then
-    do i = 10,99
-       inquire(i,opened = opened,iostat=istat)
-       if(.not. opened) then
-          cam_abs_unit = i
-          exit
-       endif
-    enddo
-    if(istat /= 0) &
+    call mpas_new_unit(cam_abs_unit, unformatted = .true.)
+    if(cam_abs_unit < 0) &
        call physics_error_fatal('module_ra_cam: radaeinit: Cannot find unused '//&
                                 'fortran unit to read in lookup table.')
  endif
@@ -375,7 +368,10 @@
  DM_BCAST_MACRO(ln_ah2ow)
  DM_BCAST_MACRO(ln_eh2ow)
 
- if(dminfo % my_proc_id == IO_NODE) close(cam_abs_unit)
+ if(dminfo % my_proc_id == IO_NODE) then
+    close(cam_abs_unit)
+    call mpas_release_unit(cam_abs_unit)
+ end if
 
 ! Set up table of H2O saturation vapor pressures for use in calculation effective path RH.  
 ! Need separate table from table in wv_saturation because:
@@ -595,7 +591,6 @@
  real(r8):: dummy(nspint)
 
  integer:: i,istat,cam_aer_unit
- logical:: opened
  character(len=StrKIND):: errmess
  
 !-----------------------------------------------------------------------------------------------------------------
@@ -603,16 +598,9 @@
 !call mpas_log_write('--- enter subroutine aer_optics_initialize:')
 
 !READ AEROSOL OPTICS DATA:
- istat = -999
  if(dminfo % my_proc_id == IO_NODE) then
-    do i = 10,99
-       inquire(i,opened = opened,iostat=istat)
-       if(.not. opened) then
-          cam_aer_unit = i
-          exit
-       endif
-    enddo
-    if(istat /= 0) &
+    call mpas_new_unit(cam_aer_unit, unformatted = .true.)
+    if(cam_aer_unit < 0) &
        call physics_error_fatal('module_ra_cam: aer_optics_initialize: Cannot find unused '//&
                                 'fortran unit to read in lookup table.')
  endif
@@ -685,7 +673,11 @@
  DM_BCAST_MACRO(wvolc)
  DM_BCAST_MACRO(gvolc)
 
- if(dminfo % my_proc_id == IO_NODE) close(cam_aer_unit)
+ if(dminfo % my_proc_id == IO_NODE) then
+    close(cam_aer_unit)
+    call mpas_release_unit(cam_aer_unit)
+ end if
+
 
 ! map OPAC aerosol species onto CAM aerosol species
 ! CAM name             OPAC name
@@ -764,9 +756,7 @@
  real(kind=RKIND),dimension(:,:,:),pointer:: ozmixm
 
 !local variables:
- integer,parameter:: pin_unit = 27
- integer,parameter:: lat_unit = 28
- integer,parameter:: oz_unit  = 29
+ integer:: pin_unit, lat_unit, oz_unit
  integer,parameter:: open_ok  = 0
 
  integer:: i,i1,i2,istat,k,j,m
@@ -789,6 +779,11 @@
  call mpas_pool_get_array(atm_input,'ozmixm',ozmixm)
 
 !-- read in ozone pressure data:
+ call mpas_new_unit(pin_unit)
+ if(pin_unit < 0) &
+    call physics_error_fatal('module_ra_cam: oznini: Cannot find unused '//&
+                             'fortran unit to read in lookup table.')
+
  open(pin_unit,file='OZONE_PLEV.TBL',action='READ',status='OLD',iostat=istat)
  if(istat /= open_ok) &
     call physics_error_fatal('subroutine oznini: ' // &
@@ -801,6 +796,7 @@
  close(pin_unit)
 
 !-- read in ozone lat data:
+ lat_unit = pin_unit
  open(lat_unit, file='OZONE_LAT.TBL',action='READ',status='OLD',iostat=istat) 
  if(istat /= open_ok) &
     call physics_error_fatal('subroutine oznini: ' // &
@@ -812,6 +808,7 @@
  close(lat_unit)
 
 !-- read in ozone data:
+ oz_unit = pin_unit
  open(oz_unit,file='OZONE_DAT.TBL',action='READ',status='OLD',iostat=istat)
  if(istat /= open_ok) &
     call physics_error_fatal('subroutine oznini: ' // &
@@ -828,6 +825,8 @@
  enddo
  enddo
  close(oz_unit)
+
+ call mpas_release_unit(pin_unit)
 
 !INTERPOLATION OF INPUT OZONE DATA TO MPAS GRID:
 !call mpas_log_write('max latCell= $r', realArgs=(/maxval(latCell)/degrad/))

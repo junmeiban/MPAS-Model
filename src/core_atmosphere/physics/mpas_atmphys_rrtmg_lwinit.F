@@ -15,6 +15,7 @@
  use mpas_atmphys_constants
  use mpas_atmphys_utilities
  use mpas_log, only : mpas_log_write
+ use mpas_io_units
 
 !wrf physics
  use module_ra_rrtmg_lw
@@ -71,19 +72,11 @@
 !-----------------------------------------------------------------------------------------------------------------
 
 !get a unit to open init file:
- istat = -999
  if(dminfo % my_proc_id == IO_NODE) then
-    do i = 10,99
-       inquire(i,opened = opened,iostat=istat)
-       if(.not. opened ) then
-          rrtmg_unit = i
-          exit
-       endif
-    enddo
-    if(istat /= 0) &
+    call mpas_new_unit(rrtmg_unit, unformatted = .true.)
+    if(rrtmg_unit < 0) &
        call physics_error_fatal('module_ra_rrtmg_lw: rrtm_lwlookuptable: Can not '// &
                                 'find unused fortran unit to read in lookup table.' )
-
  endif
 
 !distribute unit to other processors:
@@ -94,7 +87,6 @@
 #ifdef SINGLE_PRECISION
     open(rrtmg_unit,file='RRTMG_LW_DATA',form='UNFORMATTED',status='OLD',iostat=istat)
 #else
-!    open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat,convert='big_endian')
     open(rrtmg_unit,file='RRTMG_LW_DATA.DBL',form='UNFORMATTED',status='OLD',iostat=istat)
 #endif
 
@@ -122,7 +114,10 @@
  call lw_kgb15(rrtmg_unit,dminfo)
  call lw_kgb16(rrtmg_unit,dminfo)
 
- if(dminfo % my_proc_id == IO_NODE) close(rrtmg_unit)
+ if(dminfo % my_proc_id == IO_NODE) then
+    close(rrtmg_unit)
+    call mpas_release_unit(rrtmg_unit)
+ end if
 
  end subroutine rrtmg_lwlookuptable
 

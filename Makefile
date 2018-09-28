@@ -218,15 +218,15 @@ gfortran:
 	"FC_SERIAL = gfortran" \
 	"CC_SERIAL = gcc" \
 	"CXX_SERIAL = g++" \
-	"FFLAGS_PROMOTION = -fdefault-real-8 -fdefault-double-8 -fPIC" \
-	"FFLAGS_OPT = -O3 -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form -fPIC" \
-	"CFLAGS_OPT = -O3 -m64 -fPIC" \
-	"CXXFLAGS_OPT = -O3 -m64 -fPIC" \
-	"LDFLAGS_OPT = -O3 -m64 -fPIC" \
-	"FFLAGS_DEBUG = -g -m64 -ffree-line-length-none -fPIC -fconvert=big-endian -ffree-form -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow" \
-	"CFLAGS_DEBUG = -g -m64 -fPIC" \
-	"CXXFLAGS_DEBUG = -O3 -m64 -fPIC" \
-	"LDFLAGS_DEBUG = -g -m64 -fPIC" \
+	"FFLAGS_PROMOTION = -fdefault-real-8 -fdefault-double-8" \
+	"FFLAGS_OPT = -O3 -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form" \
+	"CFLAGS_OPT = -O3 -m64" \
+	"CXXFLAGS_OPT = -O3 -m64" \
+	"LDFLAGS_OPT = -O3 -m64" \
+	"FFLAGS_DEBUG = -g -m64 -ffree-line-length-none -fconvert=big-endian -ffree-form -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow" \
+	"CFLAGS_DEBUG = -g -m64" \
+	"CXXFLAGS_DEBUG = -O3 -m64" \
+	"LDFLAGS_DEBUG = -g -m64" \
 	"FFLAGS_OMP = -fopenmp" \
 	"CFLAGS_OMP = -fopenmp" \
 	"CORE = $(CORE)" \
@@ -609,6 +609,14 @@ else
 	override AUTOCLEAN=false
 	CONTINUE=true
 endif # END IF BUILT CORE CHECK
+
+ifeq "$(SHARELIB)" "true"
+	FFLAGS += "-fPIC"
+	CFLAGS += "-fPIC"
+	CXXFLAGS += "-fPIC"
+	override CPPFLAGS += "-fPIC"
+	LDFLAGS += "-fPIC"
+endif #SHARELIB IF
 
 ifneq ($(wildcard namelist.$(NAMELIST_SUFFIX)), ) # Check for generated namelist file.
 	NAMELIST_MESSAGE="A default namelist file (namelist.$(NAMELIST_SUFFIX).defaults) has been generated, but namelist.$(NAMELIST_SUFFIX) has not been modified."

@@ -275,6 +275,7 @@
           call physics_message('    skipping over lutype = ' // trim ( lutype ))
           do lc = 1, lucats+20
              read(read_unit,*)
+             read(16,*)
           enddo
        endif
     enddo find_lutype

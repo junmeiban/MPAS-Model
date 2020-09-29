@@ -533,6 +533,8 @@
                         <var name="isice_lu"/>
                         <var name="iswater_lu"/>
                         <var name="sfc_albbck"/>
+                        <var name="sfc_albedo_seaice"/>
+                        <var name="sfc_albedo"/>
                         <var name="skintemp"/>
                         <var name="snow"/>
                         <var name="snowc"/>
@@ -1186,6 +1188,8 @@
                         <var name="isice_lu"/>
                         <var name="iswater_lu"/>
                         <var name="sfc_albbck"/>
+                        <var name="sfc_albedo_seaice"/>
+                        <var name="sfc_albedo"/>
                         <var name="skintemp"/>
                         <var name="snow"/>
                         <var name="snowc"/>
@@ -1652,6 +1656,14 @@
 
                 <var name="vorticity" type="real" dimensions="nVertLevels nVertices Time" units="s^{-1}"
                      description="Relative vorticity at vertices"/>
+
+                <var name="stream_function" type="real" dimensions="nVertLevels nCells Time" units="m^2 s^{-1}"
+                     description="Stream function"
+                     packages="jedi_da"/>
+
+                <var name="velocity_potential" type="real" dimensions="nVertLevels nCells Time" units="m^2 s^{-1}"
+                     description="Velocity potential"
+                     packages="jedi_da"/>
 
                 <var name="pv_edge" type="real" dimensions="nVertLevels nEdges Time" units="s^{-1} kg^{-1} m^3"
                      description="absolute vorticity/rho_zz averaged to the cell edge from the vertices"/>
